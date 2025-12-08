@@ -3,71 +3,329 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>موقع فيديوهات المستخدم - Dark Web Maze</title>
+<title>موقع فيديوهات المستخدم - Dark Web Maze (Cyber Red UI)</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
-html, body {
-    background-color: #06070b !important;
-    margin:0; min-height:100vh; font-family: 'Orbitron', sans-serif;
-    color:#dfefff; overflow-x:hidden;
+  /* ====== Variables & base ====== */
+  :root{
+    --bg-1: #050507;        /* deep black-blue */
+    --bg-2: #071022;        /* slightly lighter */
+    --card-bg: rgba(255,255,255,0.02);
+    --glass: rgba(255,255,255,0.03);
+    --accent: #ff0033;      /* vivid red */
+    --accent-deep: #8b0000; /* deep red */
+    --muted: #bcd6ff;       /* soft readable blue for metadata */
+    --text: #eef6ff;        /* main readable text */
+    --soft-white: #ffffff;
+    --shadow: rgba(255,0,51,0.12);
+    --glass-strong: rgba(255,255,255,0.05);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family: 'Orbitron', sans-serif;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(255,0,51,0.04), transparent),
+                linear-gradient(180deg,var(--bg-1), var(--bg-2));
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+
+  /* ====== Header ====== */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    height:72px;
+    padding:14px 28px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35));
+    border-bottom:1px solid rgba(255,255,255,0.03);
+    backdrop-filter: blur(8px);
+    z-index:1100;
+  }
+
+  .brand{
+    font-size:18px;
+    color:var(--soft-white);
+    font-weight:700;
+    letter-spacing:0.8px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .brand::before{
+    content:"";
+    width:12px;height:12px;border-radius:3px;
+    background: linear-gradient(135deg,var(--accent-deep),var(--accent));
+    box-shadow:0 0 14px rgba(255,0,51,0.28), inset 0 -2px 4px rgba(0,0,0,0.4);
+    display:inline-block;
+  }
+
+  .darkbox{
+    margin-left:auto;
+    background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:700;
+    color:var(--soft-white);
+    font-size:13px;
+    border:1px solid rgba(255,255,255,0.02);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  }
+
+  /* ====== Layout ====== */
+  .container{
+    padding:110px 20px 90px;
+    max-width:1200px;
+    margin:0 auto;
+  }
+
+  .hero{
+    background: linear-gradient(90deg, rgba(0,0,0,0.35), transparent);
+    padding:18px;
+    border-radius:12px;
+    margin-bottom:18px;
+    color:var(--text);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    border:1px solid rgba(255,255,255,0.02);
+  }
+
+  .hero-left h1{
+    margin:0;
+    font-size:20px;
+    line-height:1.05;
+    color:var(--text);
+  }
+  .hero-left p{margin:0;color:var(--muted);font-size:13px}
+
+  /* ====== Grid & Cards ====== */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+    gap:16px;
+    margin-top:10px;
+  }
+
+  .card{
+    background: linear-gradient(180deg, var(--card-bg), transparent);
+    border-radius:12px;
+    overflow:hidden;
+    border: 1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 10px 30px var(--shadow);
+    transition: transform .28s ease, box-shadow .28s ease;
+    display:flex;
+    flex-direction:column;
+    min-height:320px;
+  }
+  .card:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(255,0,51,0.18);
+  }
+
+  .thumb-container{
+    position:relative;
+    width:100%;
+    height:200px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.15));
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .thumb{width:100%; height:100%; object-fit:cover; display:block; filter:contrast(1.02) saturate(.95);}
+
+  .play-icon{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border:2px solid rgba(255,255,255,0.06);
+    color:var(--soft-white);
+    width:64px;height:64px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;
+    cursor:pointer;
+    transition: transform .22s ease, box-shadow .22s ease;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 0 20px rgba(255,0,51,0.06);
+  }
+  .play-icon:hover{ transform:translate(-50%,-50%) scale(1.08); box-shadow:0 10px 30px rgba(255,0,51,0.18);}
+
+  .card-body{padding:14px; display:flex; flex-direction:column; gap:10px; margin-top:auto;}
+  .title-container{padding:8px 0; background:transparent;}
+  .title{
+    font-size:15px;
+    font-weight:700;
+    color:var(--text);
+    margin-bottom:6px;
+    line-height:1.25;
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .title.expanded{ -webkit-line-clamp:unset; max-height:none; }
+
+  .meta{
+    font-size:12px;
+    color:var(--muted);
+  }
+
+  .read-more-btn, .copy-btn{
+    background:none;border:none;color:var(--accent);
+    font-size:12px;cursor:pointer;padding:6px 8px;border-radius:8px;
+    transition: background .18s ease, transform .12s ease;
+  }
+  .read-more-btn:hover, .copy-btn:hover{ background: rgba(255,0,51,0.06); transform:translateY(-2px); }
+
+  .controls{display:flex; gap:8px; align-items:center;}
+  .btn{padding:8px 10px;border-radius:8px;border:none; cursor:pointer; font-weight:700;}
+  .buy{background:linear-gradient(90deg,var(--accent-deep),var(--accent)); color:#fff; flex:1;}
+  .empty{padding:40px;text-align:center;color:var(--muted);font-weight:700}
+
+  /* ====== Profile button (improved) ====== */
+  .profile-btn{
+    position:fixed;
+    bottom:22px; right:22px;
+    background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+    color:var(--soft-white);
+    width:64px; height:64px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:28px;
+    box-shadow:0 6px 30px rgba(255,0,51,0.25), inset 0 -6px 18px rgba(0,0,0,0.25);
+    cursor:pointer;
+    z-index:1200;
+    border:2px solid rgba(255,255,255,0.06);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .profile-btn:hover{ transform:translateY(-6px) scale(1.03); box-shadow:0 18px 50px rgba(255,0,51,0.35); }
+
+  /* ====== Profile modal content tweaks ====== */
+  #profileModal{
+    position:fixed; top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.88);
+    display:none; align-items:center; justify-content:center;
+    padding:40px; z-index:1400;
+  }
+  .profile-card{
+    width:100%; max-width:720px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    border-radius:12px; padding:26px; text-align:center;
+    border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.6);
+  }
+  .profile-pic{ width:130px; height:130px; border-radius:50%; object-fit:cover; border:3px solid var(--accent); box-shadow: 0 10px 30px rgba(255,0,51,0.12); }
+  .uid{ margin:12px 0; color:var(--accent); font-size:14px; font-weight:800; letter-spacing:0.8px; }
+  .devs{ margin-top:18px; display:flex; flex-direction:column; gap:10px; align-items:stretch; justify-content:center; }
+
+  .dev{
+    display:flex; align-items:center; gap:12px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+    padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02);
+  }
+  .dev img{ width:54px; height:54px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.03); }
+  .dev div{ color:var(--text); font-weight:700; font-size:14px; }
+  .stars{ color:var(--accent); font-size:13px; }
+
+  .close-btn{ position:absolute; top:18px; right:18px; background:none; border:none; color:var(--text); font-size:28px; cursor:pointer; }
+
+  /* ====== Maintenance / update pages ====== */
+  #maintenancePage,#updatePage{
+    display:none;
+    position:fixed; top:0; left:0; right:0; bottom:0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.95), rgba(10,10,10,0.95));
+    color:var(--text); z-index:2000;
+    flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;
+  }
+  .btn-update{
+    background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+    color: #fff; padding:12px 22px; border:none; border-radius:10px; font-weight:800; cursor:pointer; margin-top:18px;
+    box-shadow: 0 10px 30px rgba(255,0,51,0.18);
+  }
+
+  /* ====== Anti-flash layer ====== */
+  #anti-flash-layer {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #000; z-index: -1; pointer-events: none;
+  }
+
+  /* ====== Animated text (RED <-> WHITE slow) ====== */
+  .cyber-text {
+    display:inline-block;
+    font-weight:800;
+    background: linear-gradient(90deg, #ffffff 0%, #ffffff 20%, var(--accent) 50%, #ffffff 80%, #ffffff 100%);
+    background-size: 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: cyberFlowSlow 9s linear infinite;
+    text-shadow: 0 0 10px rgba(255,0,51,0.08);
+  }
+  @keyframes cyberFlowSlow {
+    0%{ background-position: 0% 50%; }
+    50%{ background-position: 100% 50%; }
+    100%{ background-position: 0% 50%; }
+  }
+
+  /* ====== Accessibility & responsiveness ====== */
+  h1,h2,h3,h4,h5,p,.title,.brand,.darkbox,button,.uid,.stars,.dev div{
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  @media (max-width:640px){
+    .container{ padding:100px 12px 90px; }
+    .thumb-container{ height:160px; }
+    .profile-btn{ width:56px;height:56px;font-size:24px; right:14px; bottom:14px; }
+    header{ padding:12px 16px; height:64px; }
+  }
+
+
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
 }
-.container{padding:120px 18px 80px; max-width:1200px; margin:0 auto;}
-.grid{display:grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap:16px;}
-.card{background:#06070b; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.03);}
-.thumb-container{position:relative; width:100%; height:185px; overflow:hidden; content-visibility:auto;}
-.thumb{width:100%; height:100%; object-fit:cover; display:block; loading:lazy;}
-.play-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-background:rgba(0,0,0,0.6);border:2px solid #ff0000;color:#ff0000;
-width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-font-size:20px;cursor:pointer;transition:0.3s;}
-.play-icon:hover{transform:translate(-50%,-50%) scale(1.1);}
-.card-body{padding:12px;}
-.title-container{padding:10px; background:rgba(0,0,0,0.3);}
-.title{font-size:14px; font-weight:700; color:#fff; max-height:3.6em; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;}
-.title.expanded{max-height:none;-webkit-line-clamp:unset;}
-.read-more-btn, .copy-btn{background:none; border:none; color:#ff0000; font-size:12px; cursor:pointer; margin-top:5px; margin-left:5px;}
-.empty{padding:40px;text-align:center;color:#9fb7ff}
-header{position:fixed; top:0; left:0; right:0; padding:18px 24px; display:flex; align-items:center; gap:12px; background:rgba(0,0,0,0.85);}
-.brand{font-size:18px;color:#ff0000; font-weight:700;}
-.hero{background: linear-gradient(90deg, rgba(0,0,0,0.45), transparent); padding:18px; border-radius:10px; margin-bottom:14px; color:#cfe8ff; display:flex; align-items:center; gap:12px;}
-.hero h1{margin:0;font-size:20px;}
-.hero p{margin:0;color:#9fb7ff;font-size:13px}
-.profile-btn{position:fixed; bottom:22px; right:22px; background:#ff0000; color:#001; width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; cursor:pointer; z-index:999;}
-#profileModal{position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.92); display:none; flex-direction:column; align-items:center; padding:100px 20px; overflow-y:auto; z-index:2000;}
-.profile-card{text-align:center;color:#eaffff;}
-.profile-pic{width:120px;height:120px;border-radius:50%;object-fit:cover;border:2px solid #ff0000;}
-.uid{margin:10px 0;color:#ff0000;font-size:14px;}
-.devs{margin-top:30px;width:100%;max-width:500px;}
-.dev{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.05);padding:10px;border-radius:10px;margin-bottom:10px;}
-.dev img{width:50px;height:50px;border-radius:50%;object-fit:cover;}
-.stars{color:gold;font-size:14px;}
-.close-btn{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;}
-#maintenancePage,#updatePage{display:none; position:fixed;top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.95); color:#fff; z-index:5000; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;}
-.btn-update{background:#ff0000;color:#001;padding:10px 20px;border:none;border-radius:10px;font-weight:700;cursor:pointer;margin-top:20px;}
+
 </style>
 </head>
 <body>
+
 <div id="maintenancePage">
-  <h1>🚧 الموقع تحت الصيانة</h1>
+  <h1 class="cyber-text">🚧 الموقع تحت الصيانة</h1>
   <p>سيتم العودة قريبًا... يرجى المحاولة لاحقًا</p>
 </div>
 
+<div id="anti-flash-layer"></div>
+
 <div id="updatePage">
-  <h1>📦 تحديث جديد متوفر</h1>
+  <h1 class="cyber-text">📦 تحديث جديد متوفر</h1>
   <p>يجب تحديث التطبيق للاستمرار في استخدامه</p>
   <button id="updateBtn" class="btn-update">تحميل التحديث</button>
 </div>
 
 <div id="mainContent" style="display:none;">
   <header>
-    <div class="brand">Dark Web Maze</div>
+    <div class="brand"><span class="cyber-text">ProCoders Academy</span></div>
+    <div class="darkbox">ProCoders Academy</div>
   </header>
 
   <div class="container">
     <div class="hero">
-      <div>
-        <h1>أحدث الفيديوهات المنشورة</h1>
-        <p>𝐃𝐚𝐫𝐤 𝗪𝗲𝗯 𝐌𝐚𝐳𝗲 𝗼𝗳 𝐃𝐚𝐫𝐤𝐧𝐞𝐬𝐬</p>
+      <div class="hero-left">
+        <h1 class="cyber-text">أحدث الفيديوهات المنشورة</h1>
+        <p>ProCoders Academy — تصفح الدروس بسهولة</p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <div style="font-size:13px;color:var(--muted)">تعلّم معي… ومستقبلك البرمجي يبدأ من هنا – ProCoders</div>
       </div>
     </div>
 
@@ -75,38 +333,36 @@ header{position:fixed; top:0; left:0; right:0; padding:18px 24px; display:flex; 
     <div id="empty" class="empty" style="display:none">لا توجد فيديوهات حتى الآن</div>
   </div>
 
-  <div class="profile-btn" onclick="openProfile()">👤</div>
+  <div class="profile-btn" onclick="openProfile()" title="الملف الشخصي">👤</div>
 
   <div id="profileModal">
     <button class="close-btn" onclick="closeProfile()">×</button>
     <div class="profile-card">
-      <img src="https://img.freepik.com/free-photo/dark-background-hacked-compromised-system-3d-illustration_1419-2810.jpg" class="profile-pic">
+      <img src="https://img.freepik.com/free-photo/dark-background-hacked-compromised-system-3d-illustration_1419-2810.jpg" class="profile-pic" alt="profile">
       <div class="uid" id="deviceId"></div>
       <div class="devs" id="devsList"></div>
     </div>
   </div>
 </div>
 
+<!-- Firebase (unchanged) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
 <script>
-const firebaseUserConfig = {  
-  apiKey: "AIzaSyDsTkCfbUJK3bnV4GI0caSHE8XOTggnnYI",  
-  authDomain: "alio-6eb47.firebaseapp.com",  
-  databaseURL: "https://alio-6eb47-default-rtdb.firebaseio.com",  
-  projectId: "alio-6eb47",  
-  storageBucket: "alio-6eb47.appspot.com",  
-  messagingSenderId: "584481268869",  
-  appId: "1:584481268869:android:b3543e690574bc8410b5ec"  
+const firebaseUserConfig = {
+  apiKey: "AIzaSyDsTkCfbUJK3bnV4GI0caSHE8XOTggnnYI",
+  authDomain: "alio-6eb47.firebaseapp.com",
+  databaseURL: "https://alio-6eb47-default-rtdb.firebaseio.com",
+  projectId: "alio-6eb47",
+  storageBucket: "alio-6eb47.appspot.com",
+  messagingSenderId: "584481268869",
+  appId: "1:584481268869:android:b3543e690574bc8410b5ec"
 };
-const userApp = firebase.initializeApp(firebaseUserConfig, "userApp");  
+const userApp = firebase.initializeApp(firebaseUserConfig, "userApp");
 const db = userApp.database();
 
 const CURRENT_VERSION = 1.0;
-const grid = document.getElementById('videosGrid');  
-const empty = document.getElementById('empty');  
-let currentPlaying = null;
 
 async function checkSystem(){
   const snap = await db.ref('settings').once('value');
@@ -126,101 +382,105 @@ async function checkSystem(){
 }
 checkSystem();
 
+const grid = document.getElementById('videosGrid');
+const empty = document.getElementById('empty');
+let currentPlaying = null;
+
 function renderVideoCard(v){
-  empty.style.display='none';
-  const div = document.createElement('div');
+  const div = document.createElement('div'); 
   div.className = 'card';
-
-  const titleContainer = document.createElement('div');
-  titleContainer.className = 'title-container';
-
-  const title = document.createElement('div');
-  title.className='title';
-  title.textContent = v.title || 'بدون عنوان';
-
-  const readBtn = document.createElement('button');
-  readBtn.className='read-more-btn';
-  readBtn.textContent='قراءة المزيد';
-  readBtn.onclick = ()=> {
-    title.classList.toggle('expanded');
-    readBtn.textContent = title.classList.contains('expanded') ? 'إخفاء النص' : 'قراءة المزيد';
-  };
-
-  const copyBtn = document.createElement('button');
-  copyBtn.className='copy-btn';
-  copyBtn.textContent='📋 نسخ النص';
-  copyBtn.onclick = ()=> navigator.clipboard.writeText(title.textContent).catch(()=>{});
-
-  titleContainer.appendChild(title);
-  titleContainer.appendChild(readBtn);
-  titleContainer.appendChild(copyBtn);
-
-  const thumbContainer = document.createElement('div');
-  thumbContainer.className='thumb-container';
-
-  const img = document.createElement('img');
-  img.className='thumb';
-  img.src = v.thumbURL || 'https://via.placeholder.com/640x360?text=No+Thumbnail';
-  img.alt = v.title || 'بدون عنوان';
-
-  const playIcon = document.createElement('div');
-  playIcon.className='play-icon';
-  playIcon.textContent='▶';
-  playIcon.onclick = ()=> playVideo(thumbContainer, v.videoURL);
-
-  thumbContainer.appendChild(img);
-  thumbContainer.appendChild(playIcon);
-
-  const cardBody = document.createElement('div');
-  cardBody.className='card-body';
-  const dateDiv = document.createElement('div');
-  dateDiv.style='font-size:12px;color:#9fb7ff;margin-bottom:8px';
-  dateDiv.textContent = new Date(v.publishedAt||0).toLocaleString();
-  cardBody.appendChild(dateDiv);
-
-  div.appendChild(titleContainer);
-  div.appendChild(thumbContainer);
-  div.appendChild(cardBody);
-
+  const thumb = v.thumbURL || 'https://via.placeholder.com/640x360?text=No+Thumbnail';
+  const safeTitle = escapeHtml(v.title || 'بدون عنوان');
+  const videoId = 'vid_' + Math.random().toString(36).substring(2,9);
+  const shortId = 't_' + Math.random().toString(36).substring(2,9);
+  
+  div.innerHTML = `
+    <div class="title-container">
+      <div id="${shortId}" class="title">${safeTitle}</div>
+      <button class="read-more-btn" onclick="toggleReadMore('${shortId}', this)">قراءة المزيد</button>
+      <button class="copy-btn" onclick="copyText('${shortId}')">📋 نسخ النص</button>
+    </div>
+    <div class="thumb-container" id="thumbContainer_${videoId}">
+      <img src="${thumb}" class="thumb" alt="${safeTitle}">
+      <div class="play-icon" id="playIcon_${videoId}" onclick="playVideo('${videoId}', '${v.videoURL.replace(/'/g,"\\'")}')">▶</div>
+    </div>
+    <div class="card-body">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">${new Date(v.publishedAt||0).toLocaleString()}</div>
+      <div class="controls"> 
+    </div>`;
   grid.appendChild(div);
 }
 
-function playVideo(container, url){
-  if(currentPlaying && currentPlaying !== container){
-    const oldVideo = currentPlaying.querySelector('video');
-    if(oldVideo) oldVideo.pause();
-    const oldThumb = currentPlaying.querySelector('.thumb');
-    if(oldThumb) oldThumb.style.display='block';
-    const oldIcon = currentPlaying.querySelector('.play-icon');
-    if(oldIcon) oldIcon.style.display='flex';
-  }
-  const img = container.querySelector('.thumb');
-  const icon = container.querySelector('.play-icon');
-  if(img) img.style.display='none';
-  if(icon) icon.style.display='none';
+function toggleReadMore(id, btn){
+const t = document.getElementById(id);
+t.classList.toggle('expanded');
+btn.textContent = t.classList.contains('expanded') ? 'إخفاء النص' : 'قراءة المزيد';
+}
 
-  const video = document.createElement('video');
-  video.src = url;
-  video.controls = true;
-  video.autoplay = true;
-  video.onended = ()=> {
-    video.remove();
-    if(img) img.style.display='block';
-    if(icon) icon.style.display='flex';
-    currentPlaying = null;
-  };
-  container.appendChild(video);
-  currentPlaying = container;
+function copyText(id){
+const txt = document.getElementById(id).textContent;
+navigator.clipboard.writeText(txt).catch(()=>{});
+}
+
+function playVideo(id, url){
+  if (currentPlaying && currentPlaying !== id) {
+    const oldContainer = document.getElementById(`thumbContainer_${currentPlaying}`);
+    if (oldContainer) {
+      const oldVideo = oldContainer.querySelector('video');
+      if (oldVideo) oldVideo.pause();
+      const oldThumb = oldContainer.getAttribute('data-thumb') || '';
+      oldContainer.innerHTML = `<img src="${oldThumb}" class="thumb" alt=""><div class="play-icon" onclick="playVideo('${currentPlaying}', '${oldVideo?.src || ''}')">▶</div>`;
+    }
+  }
+  const container = document.getElementById(`thumbContainer_${id}`);
+  if (!container) return;
+  const thumb = container.querySelector('.thumb')?.src || '';
+  container.setAttribute('data-thumb', thumb);
+  container.innerHTML = `<video controls autoplay src="${url}" onended="videoEnded('${id}')"></video>`;
+  currentPlaying = id;
+}
+
+function videoEnded(id){
+  const container = document.getElementById(`thumbContainer_${id}`);
+  if (!container) return;
+  const thumb = container.getAttribute('data-thumb');
+  container.innerHTML = `<img src="${thumb}" class="thumb" alt=""><div class="play-icon" onclick="playVideo('${id}', '${container.querySelector('video')?.src || ''}')">▶</div>`;
+  currentPlaying = null;
+}
+
+function escapeHtml(s){ 
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); 
+}
+
+function buyCourse(id){
+  if (typeof Android !== "undefined" && Android.openGggActivity) {
+    Android.openGggActivity();
+  } else {
+    alert('يرجى فتح هذا الموقع من داخل التطبيق.');
+  }
 }
 
 function loadVideosRealtime(){
   const ref = db.ref('videos7').orderByChild('publishedAt');
-  ref.on('child_added', snap => renderVideoCard(snap.val()));
+  ref.on('value', snapshot => {
+    const data = snapshot.val() || {};
+    const arr = Object.values(data).sort((a,b)=>b.publishedAt - a.publishedAt);
+    grid.innerHTML = '';
+    if (arr.length === 0) {
+      empty.style.display = 'block';
+    } else {
+      empty.style.display = 'none';
+      arr.forEach(v => renderVideoCard(v));
+    }
+  });
 }
 
 function getUniqueId(){
   let uid = localStorage.getItem('device_uid');
-  if(!uid){ uid = 'UID-' + Math.random().toString(36).substring(2,10).toUpperCase(); localStorage.setItem('device_uid', uid); }
+  if(!uid){
+    uid = 'UID-' + Math.random().toString(36).substring(2,10).toUpperCase();
+    localStorage.setItem('device_uid', uid);
+  }
   return uid;
 }
 
@@ -234,17 +494,26 @@ function openProfile(){
     {name:'AnonRoot', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyMDGQMDS4SXphtFEZY50icL5tRotlupvBphiyR6uVag&s=10', stars:5},
     {name:'ZeroHack', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlLdi3Bzhgh7tUznsWYCmF-4I3ugAf6BKSoAT6P78jZg&s=10', stars:4}
   ];
-  const devsList = document.getElementById('devsList');  
+  const devsList = document.getElementById('devsList');
   devsList.innerHTML = '';
   devs.forEach(d=>{
     const div = document.createElement('div');
     div.className='dev';
-    div.innerHTML=<img src="${d.img}"><div><div>${d.name}</div><div class="stars">${'★'.repeat(d.stars)}${'☆'.repeat(5-d.stars)}</div></div>;
+    div.innerHTML = `<img src="${d.img}"><div><div>${d.name}</div><div class="stars">${'★'.repeat(d.stars)}${'☆'.repeat(5-d.stars)}</div></div>`;
     devsList.appendChild(div);
   });
 }
 
-function closeProfile(){ document.getElementById('profileModal').style.display='none'; }
+function closeProfile(){
+  document.getElementById('profileModal').style.display='none';
+}
 </script>
+
+<script>
+document.querySelectorAll(
+  "h1,h2,h3,h4,h5,p,.title,.brand,.darkbox,button,.uid,.stars,.dev div"
+).forEach(x=>x.classList.add("cyber-text"));
+</script>
+
 </body>
 </html>
